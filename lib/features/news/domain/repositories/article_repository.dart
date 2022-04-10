@@ -14,8 +14,8 @@ enum category_type {
 }
 
 abstract class ArticleRepository {
-  Future<Either<Failure, ArticleEntity>> getArticleByCategory(
+  Future<Either<Failure, List<ArticleEntity>>> getArticleByCategory(
       category_type category);
 
-  Future<Either<Failure, ArticleEntity>> getArticleByQuery(String query);
+  Future<Either<Failure, List<ArticleEntity>>> getArticleByQuery(String query);
 }

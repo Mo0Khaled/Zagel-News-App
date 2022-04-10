@@ -25,8 +25,7 @@ dependencies:
   dio: ^4.0.6
   # Local storage
   get_storage: ^2.0.3
-  # testing stuff
-  mocktail: ^0.3.0
+
   # for code documentation
 #  dartdoc: ^4.0.0
 dev_dependencies:
@@ -36,6 +35,8 @@ dev_dependencies:
   lint: ^1.8.2
   integration_test:
     sdk: flutter
+  # testing stuff
+  mocktail: ^0.3.0
 
 
 flutter:
