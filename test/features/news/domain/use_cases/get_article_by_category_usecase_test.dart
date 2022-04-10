@@ -32,7 +32,7 @@ void main() {
     when(() => mockArticleRepository.getArticleByCategory(any()))
         .thenAnswer((_) async => const Right([tArticle]));
 
-    final result = await useCase(tCategory);
+    final result = await useCase(const Params(category: tCategory));
     expect(result, const Right([tArticle]));
     verify(() => mockArticleRepository.getArticleByCategory(tCategory)).called(1);
     verifyNoMoreInteractions(mockArticleRepository);

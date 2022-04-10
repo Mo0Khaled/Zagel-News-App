@@ -5,23 +5,25 @@ import 'package:zagel_news_app/core/usecases/use_case.dart';
 import 'package:zagel_news_app/features/news/domain/entities/article_entity.dart';
 import 'package:zagel_news_app/features/news/domain/repositories/article_repository.dart';
 
-class GetArticleByCategoryUseCase extends UseCase<List<ArticleEntity>, Params> {
+class GetArticleByQueryUseCase extends UseCase<List<ArticleEntity>,Params>{
   final ArticleRepository repository;
 
-  GetArticleByCategoryUseCase(this.repository);
+  GetArticleByQueryUseCase(this.repository);
 
   @override
   Future<Either<Failure, List<ArticleEntity>>> call(Params params) async{
-    return await repository.getArticleByCategory(params.category);
+    return  repository.getArticleByQuery(params.query);
   }
 
 
 }
-class Params extends Equatable {
-  final category_type category;
 
-  const Params({required this.category});
+class Params extends Equatable{
+  final String query;
+
+
+ const Params({required this.query});
 
   @override
-  List<Object?> get props => [category];
+  List<Object> get props => [query];
 }
