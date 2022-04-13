@@ -1,9 +1,13 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:zagel_news_app/core/platform/network_info.dart';
 import 'package:zagel_news_app/features/news/data/data_sources/article_locale_data_source.dart';
 import 'package:zagel_news_app/features/news/data/data_sources/article_remote_data_source.dart';
+import 'package:zagel_news_app/features/news/data/models/article_model.dart';
 import 'package:zagel_news_app/features/news/data/repositories/article_repository_impl.dart';
+import 'package:zagel_news_app/features/news/domain/entities/article_entity.dart';
+import 'package:zagel_news_app/features/news/domain/repositories/article_repository.dart';
 
 class MockArticleRemoteDataSource extends Mock implements ArticleRemoteDataSource {}
 
@@ -24,4 +28,68 @@ void main() {
       networkInfo: mockNetworkInfo,
     );
   });
+  group('getArticles' ,(){
+    const tCategory = category_type.sports;
+    const ArticleModel tArticleModel = ArticleModel(
+      title: 'title',
+      description: 'description',
+      urlToImage: 'urlToImage',
+      publishedAt: 'publishedAt',
+      content: 'content',
+      author: 'author',
+    );
+  const ArticleEntity tArticleEntity = tArticleModel;
+
+  const tArticleModelList = [tArticleModel];
+
+    test(
+        'should call  getArticles  method  of  remoteDataSource  when  isConnected  is true',
+       ()async{
+       // arrange
+       when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+       when(()=>mockArticleRemoteDataSource.getArticleByCategory(tCategory)).thenAnswer((_) async =>   tArticleModelList);
+       when(()=> mockArticleLocaleDataSource.cacheArticleLocale(tArticleModelList) ).thenAnswer((_) async =>  tArticleModelList);
+
+       // act
+           repository.getArticleByCategory(tCategory);
+       // assert
+        verify(()=>mockNetworkInfo.isConnected);
+      }
+    );
+    group('device is online', (){
+      setUp((){
+        when(()=> mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+      });
+
+      test('should return remote data when the call to remote data source is successful',()async{
+        //arrange
+        when(()=>mockArticleRemoteDataSource.getArticleByCategory(tCategory)).thenAnswer((_) async =>   tArticleModelList);
+        when(()=> mockArticleLocaleDataSource.cacheArticleLocale(tArticleModelList) ).thenAnswer((_) async =>  tArticleModelList);
+
+        //act
+        final result = await repository.getArticleByCategory(tCategory);
+        //assert
+        verify(()=>mockArticleRemoteDataSource.getArticleByCategory(tCategory));
+        expect(result, equals( const Right(tArticleModelList)));
+      });
+
+      test('should cache the data locally when the call to remote data source is successful',()async{
+        //arrange
+        when(()=>mockArticleRemoteDataSource.getArticleByCategory(tCategory)).thenAnswer((_) async =>   tArticleModelList);
+        when(()=> mockArticleLocaleDataSource.cacheArticleLocale(tArticleModelList) ).thenAnswer((_) async =>  tArticleModelList);
+        //act
+       await repository.getArticleByCategory(tCategory);
+
+        //assert
+        verify(()=>mockArticleRemoteDataSource.getArticleByCategory(tCategory));
+        verify(()=>mockArticleLocaleDataSource.cacheArticleLocale(tArticleModelList));
+
+      });
+    });
+    group('device is offline', (){
+      setUp((){
+        when(()=> mockNetworkInfo.isConnected).thenAnswer((_) async => false);
+      });
+    });
+  } );
 }

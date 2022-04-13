@@ -12,7 +12,7 @@ class GetArticleByCategoryUseCase extends UseCase<List<ArticleEntity>, Params> {
 
   @override
   Future<Either<Failure, List<ArticleEntity>>> call(Params params) async{
-    return await repository.getArticleByCategory(params.category);
+    return  repository.getArticleByCategory(params.category);
   }
 
 

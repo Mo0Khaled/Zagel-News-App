@@ -19,9 +19,12 @@ class ArticleRepositoryImpl extends ArticleRepository {
 
   @override
   Future<Either<Failure, List<ArticleEntity>>> getArticleByCategory(
-      category_type category) {
-    // TODO: implement getArticleByCategory
-    throw UnimplementedError();
+      category_type category) async{
+    await networkInfo.isConnected;
+    final articlesList = await remoteDataSource.getArticleByCategory(category);
+    print(articlesList);
+     localeDataSource.cacheArticleLocale(articlesList);
+   return Right( articlesList);
   }
 
   @override
