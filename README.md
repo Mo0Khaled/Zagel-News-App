@@ -18,4 +18,3 @@ wrote integration tests for the app.
 
 wrote code documentation for the app.
 
-"# Zagel-News-App" 
