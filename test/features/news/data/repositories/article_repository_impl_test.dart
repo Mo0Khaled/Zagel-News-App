@@ -48,7 +48,7 @@ void main() {
        // arrange
        when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
        when(()=>mockArticleRemoteDataSource.getArticleByCategory(tCategory)).thenAnswer((_) async =>   tArticleModelList);
-       when(()=> mockArticleLocaleDataSource.cacheArticleLocale(tArticleModelList) ).thenAnswer((_) async =>  tArticleModelList);
+       when(()=> mockArticleLocaleDataSource.cacheArticleLocale(tArticleModelList) ).thenAnswer((_) async =>  {});
 
        // act
            repository.getArticleByCategory(tCategory);
@@ -64,19 +64,19 @@ void main() {
       test('should return remote data when the call to remote data source is successful',()async{
         //arrange
         when(()=>mockArticleRemoteDataSource.getArticleByCategory(tCategory)).thenAnswer((_) async =>   tArticleModelList);
-        when(()=> mockArticleLocaleDataSource.cacheArticleLocale(tArticleModelList) ).thenAnswer((_) async =>  tArticleModelList);
+        when(()=> mockArticleLocaleDataSource.cacheArticleLocale(tArticleModelList) ).thenAnswer((_) async =>  {});
 
         //act
         final result = await repository.getArticleByCategory(tCategory);
         //assert
-        verify(()=>mockArticleRemoteDataSource.getArticleByCategory(tCategory));
+        verify(()=>mockArticleRemoteDataSource.getArticleByCategory(tCategory)).called(1);
         expect(result, equals( const Right(tArticleModelList)));
       });
 
       test('should cache the data locally when the call to remote data source is successful',()async{
         //arrange
         when(()=>mockArticleRemoteDataSource.getArticleByCategory(tCategory)).thenAnswer((_) async =>   tArticleModelList);
-        when(()=> mockArticleLocaleDataSource.cacheArticleLocale(tArticleModelList) ).thenAnswer((_) async =>  tArticleModelList);
+        when(()=> mockArticleLocaleDataSource.cacheArticleLocale(tArticleModelList) ).thenAnswer((_) async =>  {});
         //act
        await repository.getArticleByCategory(tCategory);
 

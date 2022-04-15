@@ -22,7 +22,6 @@ class ArticleRepositoryImpl extends ArticleRepository {
       category_type category) async{
     await networkInfo.isConnected;
     final articlesList = await remoteDataSource.getArticleByCategory(category);
-    print(articlesList);
      localeDataSource.cacheArticleLocale(articlesList);
    return Right( articlesList);
   }

@@ -1,0 +1,31 @@
+#The name of your workflow.
+name: tests
+# Trigger the workflow on push or pull request
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [ main ]
+#A workflow run is made up of one or more jobs. Jobs run in parallel by default.
+jobs:
+  test:
+    #The type of machine to run the job on. [windows,macos, ubuntu , self-hosted]
+    defaults:
+      run:
+        working-directory: ./
+    runs-on: ubuntu-latest
+    #sequence of tasks called
+
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: subosito/flutter-action@v1.5.3
+
+      - name: Install Dependencies
+        run: flutter packages get
+
+      - name: Run tests
+        run: flutter test --coverage
+
+      - name: Very Good Coverage
+        uses: VeryGoodOpenSource/very_good_coverage@v1.2.1
