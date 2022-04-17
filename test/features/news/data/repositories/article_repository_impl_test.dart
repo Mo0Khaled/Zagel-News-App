@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:zagel_news_app/core/exceptions/exceptions.dart';
+import 'package:zagel_news_app/core/exceptions/failure.dart';
 import 'package:zagel_news_app/core/platform/network_info.dart';
 import 'package:zagel_news_app/features/news/data/data_sources/article_locale_data_source.dart';
 import 'package:zagel_news_app/features/news/data/data_sources/article_remote_data_source.dart';
@@ -84,6 +86,19 @@ void main() {
         verify(()=>mockArticleRemoteDataSource.getArticleByCategory(tCategory));
         verify(()=>mockArticleLocaleDataSource.cacheArticleLocale(tArticleModelList));
 
+      });
+
+      test('should return server failure when the call to remote data source is unsuccessful',()async{
+        //arrange
+        when(()=>mockArticleRemoteDataSource.getArticleByCategory(tCategory)).thenThrow(ServerException());
+        when(()=> mockArticleLocaleDataSource.cacheArticleLocale(tArticleModelList) ).thenAnswer((_) async =>  {});
+
+        //act
+        final result = await repository.getArticleByCategory(tCategory);
+        //assert
+        verify(()=>mockArticleRemoteDataSource.getArticleByCategory(tCategory)).called(1);
+        verifyZeroInteractions(mockArticleLocaleDataSource);  //verify that no interaction with local data source
+        expect(result, equals( Left(ServerFailure())));
       });
     });
     group('device is offline', (){

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:zagel_news_app/core/exceptions/exceptions.dart';
 import 'package:zagel_news_app/core/exceptions/failure.dart';
 import 'package:zagel_news_app/core/platform/network_info.dart';
 import 'package:zagel_news_app/features/news/data/data_sources/article_locale_data_source.dart';
@@ -19,11 +20,16 @@ class ArticleRepositoryImpl extends ArticleRepository {
 
   @override
   Future<Either<Failure, List<ArticleEntity>>> getArticleByCategory(
-      category_type category) async{
+      category_type category) async {
     await networkInfo.isConnected;
-    final articlesList = await remoteDataSource.getArticleByCategory(category);
-     localeDataSource.cacheArticleLocale(articlesList);
-   return Right( articlesList);
+    try {
+      final articlesList =
+          await remoteDataSource.getArticleByCategory(category);
+      localeDataSource.cacheArticleLocale(articlesList);
+      return Right(articlesList);
+    } on ServerException {
+      return Left(ServerFailure());
+    }
   }
 
   @override
