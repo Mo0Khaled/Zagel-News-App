@@ -21,14 +21,22 @@ class ArticleRepositoryImpl extends ArticleRepository {
   @override
   Future<Either<Failure, List<ArticleEntity>>> getArticleByCategory(
       category_type category) async {
-    await networkInfo.isConnected;
-    try {
-      final articlesList =
-          await remoteDataSource.getArticleByCategory(category);
-      localeDataSource.cacheArticleLocale(articlesList);
-      return Right(articlesList);
-    } on ServerException {
-      return Left(ServerFailure());
+    if (await networkInfo.isConnected) {
+      try {
+        final articlesList =
+            await remoteDataSource.getArticleByCategory(category);
+        localeDataSource.cacheArticleLocale(articlesList);
+        return Right(articlesList);
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      try {
+        final localeArticlesList = await localeDataSource.getArticleLocale();
+        return Right(localeArticlesList);
+      } on CacheException {
+        return Left(CacheFailure());
+      }
     }
   }
 
