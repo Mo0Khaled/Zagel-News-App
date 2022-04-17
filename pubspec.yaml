@@ -25,9 +25,8 @@ dependencies:
   dio: ^4.0.6
   # Local storage
   get_storage: ^2.0.3
-
-  # for code documentation
-#  dartdoc: ^4.0.0
+  # connection to the internet
+  data_connection_checker_tv: ^0.3.5-nullsafety
 dev_dependencies:
   flutter_test:
     sdk: flutter

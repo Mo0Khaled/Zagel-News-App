@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:zagel_news_app/core/exceptions/exceptions.dart';
 import 'package:zagel_news_app/core/exceptions/failure.dart';
-import 'package:zagel_news_app/core/platform/network_info.dart';
+import 'package:zagel_news_app/core/network/network_info.dart';
 import 'package:zagel_news_app/features/news/data/data_sources/article_locale_data_source.dart';
 import 'package:zagel_news_app/features/news/data/data_sources/article_remote_data_source.dart';
 import 'package:zagel_news_app/features/news/data/models/article_model.dart';
