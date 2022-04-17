@@ -6,7 +6,7 @@ import 'package:zagel_news_app/features/news/data/data_sources/article_locale_da
 import 'package:zagel_news_app/features/news/data/data_sources/article_remote_data_source.dart';
 import 'package:zagel_news_app/features/news/domain/entities/article_entity.dart';
 import 'package:zagel_news_app/features/news/domain/repositories/article_repository.dart';
-
+typedef Future<List<ArticleEntity>> _articleChosser();
 class ArticleRepositoryImpl extends ArticleRepository {
   final ArticleRemoteDataSource remoteDataSource;
   final ArticleLocaleDataSource localeDataSource;
@@ -20,11 +20,22 @@ class ArticleRepositoryImpl extends ArticleRepository {
 
   @override
   Future<Either<Failure, List<ArticleEntity>>> getArticleByCategory(
-      category_type category) async {
+      category_type category) async =>
+      _getArticle(
+        () => remoteDataSource.getArticleByCategory(category));
+
+
+  @override
+  Future<Either<Failure, List<ArticleEntity>>> getArticleByQuery(
+      String query) async =>
+      _getArticle(() => remoteDataSource.getArticleByQuery(query));
+
+
+  Future<Either<Failure, List<ArticleEntity>>> _getArticle(
+      _articleChosser getArticleByType) async {
     if (await networkInfo.isConnected) {
       try {
-        final articlesList =
-            await remoteDataSource.getArticleByCategory(category);
+        final articlesList = await getArticleByType();
         localeDataSource.cacheArticleLocale(articlesList);
         return Right(articlesList);
       } on ServerException {
@@ -38,11 +49,5 @@ class ArticleRepositoryImpl extends ArticleRepository {
         return Left(CacheFailure());
       }
     }
-  }
-
-  @override
-  Future<Either<Failure, List<ArticleEntity>>> getArticleByQuery(String query) {
-    // TODO: implement getArticleByQuery
-    throw UnimplementedError();
   }
 }

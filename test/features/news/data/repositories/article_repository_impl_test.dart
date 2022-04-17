@@ -171,4 +171,121 @@ void main() {
           });
     });
   });
+
+  group('getArticles by query', () {
+    const tQuery = "sports";
+    const ArticleModel tArticleModel = ArticleModel(
+      title: 'title',
+      description: 'description',
+      urlToImage: 'urlToImage',
+      publishedAt: 'publishedAt',
+      content: 'content',
+      author: 'author',
+    );
+    const tArticleModelList = [tArticleModel];
+
+    test(
+        'should call  getArticles by query method  of  remoteDataSource  when  isConnected  is true',
+            () async {
+          // arrange
+          when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+          when(() => mockArticleRemoteDataSource.getArticleByQuery(tQuery))
+              .thenAnswer((_) async => tArticleModelList);
+          when(() =>
+              mockArticleLocaleDataSource.cacheArticleLocale(tArticleModelList))
+              .thenAnswer((_) async => {});
+
+          // act
+          repository.getArticleByQuery(tQuery);
+          // assert
+          verify(() => mockNetworkInfo.isConnected);
+        });
+    runTestOnline(() {
+      test(
+          'should return remote data when the call to remote data source is successful',
+              () async {
+            //arrange
+            when(() => mockArticleRemoteDataSource.getArticleByQuery(tQuery))
+                .thenAnswer((_) async => tArticleModelList);
+            when(() => mockArticleLocaleDataSource
+                .cacheArticleLocale(tArticleModelList)).thenAnswer((_) async => {});
+
+            //act
+            final result = await repository.getArticleByQuery(tQuery);
+            //assert
+            verify(() =>
+                mockArticleRemoteDataSource.getArticleByQuery(tQuery))
+                .called(1);
+            expect(result, equals(const Right(tArticleModelList)));
+          });
+
+      test(
+          'should cache the data locally when the call to remote data source is successful',
+              () async {
+            //arrange
+            when(() => mockArticleRemoteDataSource.getArticleByQuery(tQuery))
+                .thenAnswer((_) async => tArticleModelList);
+            when(() => mockArticleLocaleDataSource
+                .cacheArticleLocale(tArticleModelList)).thenAnswer((_) async => {});
+            //act
+            await repository.getArticleByQuery(tQuery);
+
+            //assert
+            verify(
+                    () => mockArticleRemoteDataSource.getArticleByQuery(tQuery));
+            verify(() =>
+                mockArticleLocaleDataSource.cacheArticleLocale(tArticleModelList));
+          });
+
+      test(
+          'should return server failure when the call to remote data source is unsuccessful',
+              () async {
+            //arrange
+            when(() => mockArticleRemoteDataSource.getArticleByQuery(tQuery))
+                .thenThrow(ServerException());
+            when(() => mockArticleLocaleDataSource
+                .cacheArticleLocale(tArticleModelList)).thenAnswer((_) async => {});
+
+            //act
+            final result = await repository.getArticleByQuery(tQuery);
+            //assert
+            verify(() =>
+                mockArticleRemoteDataSource.getArticleByQuery(tQuery))
+                .called(1);
+            verifyZeroInteractions(
+                mockArticleLocaleDataSource); //verify that no interaction with local data source
+            expect(result, equals(Left(ServerFailure())));
+          });
+    });
+    runTestOffline( () {
+      test(
+          'should return last locally cached data when the cached data is present and device is offline',
+              () async {
+            // arrange
+            when(() => mockArticleLocaleDataSource.getArticleLocale())
+                .thenAnswer((_) async => tArticleModelList);
+            // act
+            final result = await repository.getArticleByQuery(tQuery);
+            // assert
+            verifyZeroInteractions(mockArticleRemoteDataSource);
+            verify(() => mockArticleLocaleDataSource.getArticleLocale()).called(1);
+            expect(result, equals(const Right(tArticleModelList)));
+          });
+
+      test('should return cache failure when there is no cached data present',
+              () async {
+            // arrange
+            when(() => mockArticleLocaleDataSource.getArticleLocale())
+                .thenThrow(CacheException());
+            // act
+            final result = await repository.getArticleByQuery(tQuery);
+            // assert
+            verifyZeroInteractions(mockArticleRemoteDataSource);
+
+            verify(() => mockArticleLocaleDataSource.getArticleLocale()).called(1);
+            expect(result, equals(Left(CacheFailure())));
+          });
+    });
+  });
+
 }
