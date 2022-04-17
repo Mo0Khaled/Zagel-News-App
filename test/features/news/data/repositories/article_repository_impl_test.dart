@@ -34,6 +34,26 @@ void main() {
       networkInfo: mockNetworkInfo,
     );
   });
+
+  void runTestOnline(Function body) {
+    group('device is online', ()
+    {
+      setUp(() {
+        when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+      });
+      body();
+    });
+  }
+
+  void runTestOffline(Function body) {
+    group('device is online', ()
+    {
+      setUp(() {
+        when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => false);
+      });
+      body();
+    });
+  }
   group('getArticles', () {
     const tCategory = category_type.sports;
     const ArticleModel tArticleModel = ArticleModel(
@@ -64,11 +84,7 @@ void main() {
       // assert
       verify(() => mockNetworkInfo.isConnected);
     });
-    group('device is online', () {
-      setUp(() {
-        when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      });
-
+    runTestOnline(() {
       test(
           'should return remote data when the call to remote data source is successful',
           () async {
@@ -125,11 +141,7 @@ void main() {
         expect(result, equals(Left(ServerFailure())));
       });
     });
-    group('device is offline', () {
-      setUp(() {
-        when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => false);
-      });
-
+    runTestOffline( () {
       test(
           'should return last locally cached data when the cached data is present and device is offline',
           () async {
