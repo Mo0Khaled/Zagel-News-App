@@ -30,7 +30,7 @@
 .pub-cache/
 .pub/
 /build/
-/.github/workflows/secrets.dart
+/.github/workflows/secret_codecov_token.dart
 
 # Web related
 lib/generated_plugin_registrant.dart
