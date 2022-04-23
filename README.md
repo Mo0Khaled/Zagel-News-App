@@ -2,7 +2,7 @@
 [![codecov](https://codecov.io/gh/mohamedkx77/Zagel-News-App/branch/main/graph/badge.svg?token=X7HUAQ606U)](https://codecov.io/gh/mohamedkx77/Zagel-News-App)
 
     
-A new Flutter project for news app to practice the clean architecture, tdd , testing.
+A new Flutter project for news app to practice the clean architecture, tdd , testing, and more!.
 
 
 
