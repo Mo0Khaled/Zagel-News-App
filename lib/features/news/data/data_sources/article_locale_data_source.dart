@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:hive/hive.dart';
@@ -22,9 +23,13 @@ class ArticleLocaleDataSourceImpl implements ArticleLocaleDataSource {
   });
 
   @override
-  Future<void> cacheArticleLocale(List<ArticleEntity> articles) {
-    // TODO: implement cacheArticleLocale
-    throw UnimplementedError();
+  Future<void> cacheArticleLocale(List<ArticleEntity> articles) async {
+    final box = await hive.openBox(LocaleDbKeys.articleBox);
+    final Map<String, dynamic> parsedArticles = {};
+    parsedArticles['articles'] =
+        articles.map((article) => (article as ArticleModel).toJson()).toList();
+   return box.put(
+        LocaleDbKeys.articleBox, jsonEncode(parsedArticles['articles']));
   }
 
   @override
@@ -39,8 +44,6 @@ class ArticleLocaleDataSourceImpl implements ArticleLocaleDataSource {
     List<ArticleEntity> articles = [];
     final jsonArticles = (box.get(LocaleDbKeys.articleBox)
         as Map<String, dynamic>?)?['articles'];
-
-    print(jsonArticles);
     if (jsonArticles != null) {
       articles = (jsonArticles as List<dynamic>)
           .map(

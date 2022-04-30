@@ -27,41 +27,57 @@ void main() {
     mockHiveBox = MockHiveBox();
     articleLocaleDataSourceImpl = ArticleLocaleDataSourceImpl(hive: mockHive);
   });
-
+  final List<ArticleEntity> tArticlesList = [];
+  final map = jsonDecode(fixture('cached_articles')) as Map<String, dynamic>;
+  for (int i = 0; i < (map['articles'] as List).length; i++) {
+    tArticlesList
+        .add(ArticleModel.fromJson(map['articles'][i] as Map<String, dynamic>));
+  }
   group("get last cached articles", () {
-    final List<ArticleEntity> tArticlesList = [];
-    final map = jsonDecode(fixture('cached_articles')) as Map<String, dynamic>;
-    for (int i = 0; i < (map['articles'] as List).length; i++) {
-      tArticlesList.add(
-          ArticleModel.fromJson(map['articles'][i] as Map<String, dynamic>));
-    }
-
     test(
         'should return the last cached articles from the hive when the cache is not empty',
         () async {
       // arrange
       when(() => mockHive.openBox(articles))
           .thenAnswer((_) async => mockHiveBox);
-      when(() => mockHiveBox.get(articles)).thenReturn(jsonDecode(fixture('cached_articles')));
+      when(() => mockHiveBox.get(articles))
+          .thenReturn(jsonDecode(fixture('cached_articles')));
       // act
       final result = await articleLocaleDataSourceImpl.getArticleLocale();
       // assert
-      verify(() =>mockHiveBox.get(articles)).called(1);
+      verify(() => mockHiveBox.get(articles)).called(1);
       expect(result, equals(tArticlesList));
     });
 
+    test('should throw a CacheException when there is no cached articles',
+        () async {
+      // arrange
+      when(() => mockHive.openBox(articles))
+          .thenAnswer((_) async => mockHiveBox);
+      when(() => mockHiveBox.get(articles)).thenReturn(null);
+      // act
+      final call = articleLocaleDataSourceImpl.getArticleLocale;
+      // assert
+      expect(() => call(), throwsA(isInstanceOf<CacheException>()));
+    });
+  });
 
-    test(
-        'should throw a CacheException when there is no cached articles',
-            () async {
-          // arrange
-          when(() => mockHive.openBox(articles))
-              .thenAnswer((_) async => mockHiveBox);
-          when(() => mockHiveBox.get(articles)).thenReturn(null);
-          // act
-          final call =  articleLocaleDataSourceImpl.getArticleLocale;
-          // assert
-          expect(() => call(), throwsA(isInstanceOf<CacheException>()));
-        });
+  group("cache last gotten articles", () {
+    final jsonArticlesList = map['articles'] as List;
+    final Map<String, dynamic> parsedArticles = {};
+    parsedArticles['articles'] = jsonArticlesList;
+    test('should cache the last gotten articles', () async {
+      // arrange
+      final expectedJsonArticles = jsonEncode(parsedArticles['articles']);
+      when(() => mockHive.openBox(articles))
+          .thenAnswer((_) async => mockHiveBox);
+      when(() => mockHiveBox.put(articles, expectedJsonArticles))
+          .thenAnswer((_) async => true);
+      // act
+      await articleLocaleDataSourceImpl.cacheArticleLocale(tArticlesList);
+      // assert
+      verify(() => mockHiveBox.put(articles, expectedJsonArticles)).called(1);
+      verify(() => mockHive.openBox(articles)).called(1);
+    });
   });
 }
