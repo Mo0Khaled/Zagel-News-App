@@ -27,15 +27,24 @@ dependencies:
   get_storage: ^2.0.3
   # connection to the internet
   data_connection_checker_tv: ^0.3.5-nullsafety
+  # Local storage
+  hive: ^2.1.0
+  hive_flutter: ^1.1.0
+  path_provider: ^2.0.9
+
+
 dev_dependencies:
+  # testing stuff
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.4
-  lint: ^1.8.2
   integration_test:
     sdk: flutter
-  # testing stuff
   mocktail: ^0.3.0
+  # code lints
+  flutter_lints: ^1.0.4
+  lint: ^1.8.2
+
+
 
 
 flutter:

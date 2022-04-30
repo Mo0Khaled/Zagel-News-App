@@ -1,0 +1,20 @@
+{
+  "articles": [
+    {
+      "author": "Ben Morse, CNN",
+      "title": "Scottie Scheffler wins 2022 Masters, the first major of his career, following dominant performance - CNN",
+      "description": "Scottie Scheffler won the 2022 Masters on Sunday following a dominant performance at Augusta National.",
+      "urlToImage": "https://cdn.cnn.com/cnnnext/dam/assets/220410183110-01-scottie-scheffler-masters-winner-2022-super-tease.jpg",
+      "publishedAt": "2022-04-10T23:50:00Z",
+      "content": "content"
+    },
+    {
+      "author": null,
+      "title": "27 states report rise in COVID infections in past 8 days - CBS Evening News",
+      "description": "In California, COVID cases are up 78% in the last four days, but there has been no increase in the critical number of hospitalizations. Jonathan Vigliotti is...",
+      "urlToImage": "https://i.ytimg.com/vi/qRJXNGQrglQ/maxresdefault.jpg",
+      "publishedAt": "2022-04-10T23:49:10Z",
+      "content": null
+    }
+  ]
+}
