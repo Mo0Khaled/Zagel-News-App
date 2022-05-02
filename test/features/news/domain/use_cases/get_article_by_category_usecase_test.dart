@@ -27,12 +27,13 @@ void main() {
     content: 'content',
     author: 'author',
   );
+  const tArticlesList = [tArticle, tArticle, tArticle];
 
   test("should get article from the repository", () async {
     when(() => mockArticleRepository.getArticleByCategory(any()))
         .thenAnswer((_) async => const Right([tArticle]));
 
-    final result = await useCase(const Params(category: tCategory));
+    final result = await useCase(const GetArticlesCategoryUseCaseParams(category: tCategory));
     expect(result, const Right([tArticle]));
     verify(() => mockArticleRepository.getArticleByCategory(tCategory)).called(1);
     verifyNoMoreInteractions(mockArticleRepository);

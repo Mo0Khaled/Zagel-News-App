@@ -29,7 +29,7 @@ void main(){
     //arrange
     when(() => mockGetArticleByQueryUseCase.getArticleByQuery(tQuery)).thenAnswer((_) async => const Right([tArticle]));
     //act
-    final result = await useCase(const Params(query: tQuery));
+    final result = await useCase(const GetArticlesQueryUseCaseParams(query: tQuery));
     //assert
     expect(result, const Right([tArticle]));
     verify(()=>mockGetArticleByQueryUseCase.getArticleByQuery(tQuery)).called(1);
