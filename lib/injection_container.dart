@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:zagel_news_app/core/network/network_info.dart';
 import 'package:zagel_news_app/features/news/data/data_sources/article_locale_data_source.dart';
+import 'package:zagel_news_app/features/news/domain/repositories/article_repository.dart';
 import 'package:zagel_news_app/features/news/domain/use_cases/get_article_by_category_usecase.dart';
 import 'package:zagel_news_app/features/news/domain/use_cases/get_article_by_query_use_case.dart';
 import 'package:zagel_news_app/features/news/presentation/logic/news_cubit.dart';
@@ -27,7 +28,7 @@ Future<void> setupLocator() async {
 
   // repositories
 
-  sl.registerLazySingleton(
+  sl.registerLazySingleton<ArticleRepository>(
     () => ArticleRepositoryImpl(
       localeDataSource: sl(),
       remoteDataSource: sl(),
@@ -37,16 +38,17 @@ Future<void> setupLocator() async {
 
   //! DataSources
 
-  sl.registerLazySingleton(
+  sl.registerLazySingleton<ArticleRemoteDataSource>(
     () => ArticleRemoteDataSourceImpl(
       dio: sl(),
     ),
   );
-  sl.registerLazySingleton(() => ArticleLocaleDataSourceImpl(hive: sl()));
+  sl.registerLazySingleton<ArticleLocaleDataSource>(() => ArticleLocaleDataSourceImpl(hive: sl()));
 
   //! Core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
-  sl.registerLazySingleton(() => Dio());
+  sl.registerLazySingleton<HiveInterface>(() => Hive);
+  sl.registerLazySingleton<Dio>(() => Dio());
   sl.registerLazySingleton<DataConnectionChecker>(
     () => DataConnectionChecker(),
   );

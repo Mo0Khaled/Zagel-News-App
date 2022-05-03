@@ -47,7 +47,7 @@ void main() {
       // assert later
       final expected = [
         NewsLoading(),
-        NewsSuccess(),
+        const NewsSuccess(articles: tArticleList),
       ];
       expectLater(newsCubit.stream, emitsInOrder(expected));
       // act
@@ -112,7 +112,7 @@ void main() {
           // assert later
           final expected = [
             NewsLoading(),
-            NewsSuccess(),
+            const NewsSuccess(articles: tArticleList),
           ];
           expectLater(newsCubit.stream, emitsInOrder(expected));
           // act

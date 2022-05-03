@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:zagel_news_app/core/extensions/failure_To_message.dart';
+import 'package:zagel_news_app/features/news/domain/entities/article_entity.dart';
 import 'package:zagel_news_app/features/news/domain/repositories/article_repository.dart';
 import 'package:zagel_news_app/features/news/domain/use_cases/get_article_by_category_usecase.dart';
 import 'package:zagel_news_app/features/news/domain/use_cases/get_article_by_query_use_case.dart';
@@ -26,7 +27,7 @@ class NewsCubit extends Cubit<NewsState> {
           errorMessage: failure.toMessage,
         ),
       ),
-      (data) => emit(NewsSuccess()),
+      (data) => emit(NewsSuccess(articles: data)),
     );
   }
 
@@ -40,7 +41,7 @@ class NewsCubit extends Cubit<NewsState> {
           errorMessage: failure.toMessage,
         ),
       ),
-          (data) => emit(NewsSuccess()),
+          (data) => emit(NewsSuccess(articles: data)),
     );
   }
 }

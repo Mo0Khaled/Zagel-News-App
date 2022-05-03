@@ -14,8 +14,12 @@ class NewsLoading extends NewsState {
   List<Object> get props => [];
 }
 class NewsSuccess extends NewsState {
+  final List<ArticleEntity> articles;
+
+  const NewsSuccess({required this.articles});
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [articles];
 }
 class NewsFailure extends NewsState {
   final String errorMessage;

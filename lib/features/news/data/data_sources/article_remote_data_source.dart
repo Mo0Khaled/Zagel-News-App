@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:zagel_news_app/core/constant/app_strings.dart';
 import 'package:zagel_news_app/core/exceptions/exceptions.dart';
 import 'package:zagel_news_app/features/news/data/models/article_model.dart';
@@ -23,7 +24,8 @@ class ArticleRemoteDataSourceImpl extends ArticleRemoteDataSource {
   @override
   Future<List<ArticleEntity>> getArticleByCategory(
       category_type category) async {
-    final baseUrl = "$BASE_URL&category=$category&apiKey=$NEWS_API_KEY";
+
+    final baseUrl = "$BASE_URL&category=${category.name}&apiKey=$NEWS_API_KEY";
     return getArticles(baseUrl);
   }
 
@@ -38,16 +40,17 @@ class ArticleRemoteDataSourceImpl extends ArticleRemoteDataSource {
     final baseUrl = url;
     final response = await dio.get(baseUrl);
     final List<ArticleEntity> articlesList = [];
-    if (response.statusCode == 200) {
-      final jsonArticlesList = (jsonDecode(response.data as String)
-          as Map<String, dynamic>)['articles'];
-      for (final jsonArticle in jsonArticlesList) {
-        articlesList
-            .add(ArticleModel.fromJson(jsonArticle as Map<String, dynamic>));
+
+      if (response.statusCode == 200) {
+        final jsonArticlesList =
+            (response.data  as Map<String,dynamic>)['articles'];
+        for (final jsonArticle in jsonArticlesList) {
+          articlesList
+              .add(ArticleModel.fromJson(jsonArticle as Map<String, dynamic>));
+        }
+        return articlesList;
+      } else {
+        throw ServerException();
       }
-      return articlesList;
-    } else {
-      throw ServerException();
     }
-  }
 }

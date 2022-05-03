@@ -30,11 +30,11 @@ void main() {
   }
   const tCategory = category_type.sports;
   final baseUrlForCategory =
-      "$BASE_URL&category=$tCategory&apiKey=$NEWS_API_KEY";
+      "$BASE_URL&category=${tCategory.name}&apiKey=$NEWS_API_KEY";
   void setUpMockDioClientSuccess200(String url) {
     when(() => mockDio.get(url)).thenAnswer(
       (_) async => dio.Response(
-        data: fixture('articles'),
+        data: jsonDecode(fixture('articles') ) as Map<String, dynamic>,
         statusCode: 200,
         requestOptions: RequestOptions(
           baseUrl: url,
