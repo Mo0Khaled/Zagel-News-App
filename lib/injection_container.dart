@@ -7,6 +7,7 @@ import 'package:zagel_news_app/features/news/data/data_sources/article_locale_da
 import 'package:zagel_news_app/features/news/domain/repositories/article_repository.dart';
 import 'package:zagel_news_app/features/news/domain/use_cases/get_article_by_category_usecase.dart';
 import 'package:zagel_news_app/features/news/domain/use_cases/get_article_by_query_use_case.dart';
+import 'package:zagel_news_app/features/news/presentation/logic/get_articles_by_ctegory_provider.dart';
 import 'package:zagel_news_app/features/news/presentation/logic/news_cubit.dart';
 
 import 'features/news/data/data_sources/article_remote_data_source.dart';
@@ -22,6 +23,7 @@ Future<void> setupLocator() async {
       getArticleByQueryUseCase: sl(),
     ),
   );
+  sl.registerLazySingleton(() => ArticlesByCategory(getArticleByCategoryUseCase: sl()));
   //use cases
   sl.registerLazySingleton(() => GetArticleByCategoryUseCase(sl()));
   sl.registerLazySingleton(() => GetArticleByQueryUseCase(sl()));
